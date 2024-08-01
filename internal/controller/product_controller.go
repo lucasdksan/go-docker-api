@@ -83,3 +83,32 @@ func (p *productController) GetProductById(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, product)
 }
+
+func (p *productController) DeleteProduct(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	if id == "" {
+		response := model.Response{Message: "Id do produto não existe!"}
+		ctx.JSON(http.StatusNoContent, response)
+
+		return
+	}
+
+	productId, err := strconv.Atoi(id)
+
+	if err != nil {
+		response := model.Response{Message: "Id do produto inválido!"}
+		ctx.JSON(http.StatusNoContent, response)
+
+		return
+	}
+
+	if err := p.productUsecase.DeleteProduct(productId); err != nil {
+		response := model.Response{Message: "Id do produto inválido!"}
+		ctx.JSON(http.StatusNoContent, response)
+
+		return
+	}
+
+	ctx.JSON(http.StatusOK, nil)
+}
