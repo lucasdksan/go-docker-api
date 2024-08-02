@@ -112,3 +112,38 @@ func (p *productController) DeleteProduct(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, nil)
 }
+
+func (p *productController) UpdateProduct(ctx *gin.Context) {
+	id := ctx.Param("id")
+	var product model.UpdateData
+
+	if id == "" {
+		response := model.Response{Message: "Id do produto não existe!"}
+		ctx.JSON(http.StatusNoContent, response)
+
+		return
+	}
+
+	productId, err := strconv.Atoi(id)
+
+	if err != nil {
+		response := model.Response{Message: "Id do produto inválido!"}
+		ctx.JSON(http.StatusNoContent, response)
+
+		return
+	}
+
+	if err := ctx.BindJSON(&product); err != nil {
+		ctx.JSON(http.StatusBadRequest, err)
+		return
+	}
+
+	if err := p.productUsecase.UpdateProduct(productId, product); err != nil {
+		response := model.Response{Message: "Id do produto inválido!"}
+		ctx.JSON(http.StatusNoContent, response)
+
+		return
+	}
+
+	ctx.JSON(http.StatusOK, nil)
+}
